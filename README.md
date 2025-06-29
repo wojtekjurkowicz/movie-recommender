@@ -7,7 +7,7 @@ It suggests movies based on either **genre similarity** (content-based filtering
 
 ## Features
 
-- **Searchable movie dropdown** (with corrected titles like _"The Matrix"_ instead of _"Matrix, The"_)
+- **Searchable movie dropdown**
 - **Three recommendation modes**:
   - Content-based (genre similarity)
   - Collaborative (user-based with SVD)
@@ -23,7 +23,7 @@ It suggests movies based on either **genre similarity** (content-based filtering
 
 ```
 
-movie\_recommender/
+movie_recommender/
 ├── main.py               # Streamlit frontend
 ├── recommender.py        # Recommendation logic
 ├── utils.py              # Helper functions (e.g. title fixing)
@@ -65,7 +65,7 @@ Place the [MovieLens 100K dataset](https://grouplens.org/datasets/movielens/) in
 
 ---
 
-## ▶Run the App
+## Run the App
 
 ```bash
 streamlit run main.py
@@ -92,5 +92,3 @@ Then open `http://localhost:8501` in your browser.
 ## License
 
 This project is licensed under the MIT License.
-
-```
