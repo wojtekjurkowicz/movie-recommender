@@ -4,7 +4,8 @@ from recommender import (
     compute_cosine_similarity,
     train_svd_model,
     get_content_based_recommendations,
-    get_svd_recommendations
+    get_svd_recommendations,
+    get_group_recommendations
 )
 from utils import fix_title
 
@@ -30,7 +31,7 @@ algo = train_svd_model(ratings)
 # Streamlit UI
 st.title("Movie Recommender")
 
-selected_title = st.selectbox("Select a movie:", sorted(movies['fixed_title'].tolist()))
+selected_titles = st.multiselect("Select movies you like:", sorted(movies['fixed_title'].tolist()))
 mode = st.radio("Recommendation type:", ("Genre-based", "User-based", "Top Rated"))
 
 # Genre filter
@@ -44,15 +45,24 @@ selected_year = st.slider("Filter by year:", min_year, max_year, (min_year, max_
 
 if st.button("Show recommendations"):
     if mode == "Genre-based":
-        recs = get_content_based_recommendations(selected_title, movies, cosine_sim)
+        if not selected_titles:
+            st.warning("Please select at least one movie.")
+            st.stop()
+        if len(selected_titles) == 1:
+            recs = get_content_based_recommendations(selected_titles[0], movies, cosine_sim)
+        else:
+            recs = get_group_recommendations(selected_titles, movies, cosine_sim)
         rec_df = movies[movies['fixed_title'].isin(recs)]
     elif mode == "User-based":
-        recs = get_svd_recommendations(user_id=1, selected_title=selected_title, df=movies, model=algo)
+        if selected_titles:
+            recs = get_svd_recommendations(user_id=1, selected_title=selected_titles[0], df=movies, model=algo)
+        else:
+            st.warning("Please select at least one movie.")
+            st.stop()
         rec_df = movies[movies['fixed_title'].isin(recs)]
     else:  # Top Rated
         rec_df = movies_with_ratings.copy()
         rec_df = rec_df.sort_values("rating", ascending=False).head(10)
-    else_used = True
 
     # Apply genre filter
     if selected_genres:

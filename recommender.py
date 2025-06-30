@@ -42,9 +42,20 @@ def get_svd_recommendations(user_id, selected_title, df, model):
     Returns top 5 recommendations using collaborative filtering.
     """
     selected_movie_id = df[df['fixed_title'] == selected_title]['movieId'].values[0]
-    predictions = [(row['movieId'], model.predict(user_id, row['movieId']).est)
-                   for _, row in df.iterrows()]
+    movie_ids = df['movieId'].tolist()
+    predictions = [(mid, model.predict(user_id, mid).est) for mid in movie_ids]
     predictions = sorted(predictions, key=lambda x: x[1], reverse=True)
     top_ids = [pid for pid, _ in predictions if pid != selected_movie_id][:5]
     return df[df['movieId'].isin(top_ids)][['fixed_title']].assign(predicted_rating=[r for _, r in predictions if _ in top_ids])
 
+
+def get_group_recommendations(fixed_titles, df, cosine_sim):
+    """
+    Returns movies similar to a list of selected titles (group input).
+    """
+    indices = df[df['fixed_title'].isin(fixed_titles)].index
+    sim_scores = sum(cosine_sim[i] for i in indices)
+    sim_scores = list(enumerate(sim_scores / len(indices)))  # average
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    movie_indices = [i for i, _ in sim_scores if df.iloc[i]['fixed_title'] not in fixed_titles][:5]
+    return df.iloc[movie_indices]['fixed_title']
