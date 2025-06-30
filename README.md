@@ -1,3 +1,5 @@
+![Tests](https://github.com/wojtekjurkowicz/movie-recommender/actions/workflows/python-tests.yml/badge.svg)
+
 # 🎬 Movie Recommender System
 
 A movie recommendation web app built in Python using **Streamlit**, **scikit-learn**, and **Surprise**.  
@@ -8,7 +10,7 @@ It suggests movies based on either **genre similarity** (content-based filtering
 ## Features
 
 - **Searchable movie dropdown**
-- **Three recommendation modes**:
+- **Three recommendation modes**, auto-adapting to single or multiple selections:
   - Content-based (genre similarity)
   - Collaborative (user-based with SVD)
   - Top-rated (globally highest-rated movies)
@@ -16,6 +18,7 @@ It suggests movies based on either **genre similarity** (content-based filtering
   - **Genre**
   - **Year**
 - Built with an interactive **Streamlit interface**
+- **Smart multi-select**: if you choose more than one movie, recommendations are based on group similarity
 
 ---
 
@@ -32,7 +35,7 @@ movie_recommender/
 │   └── ratings.csv
 └── README.md
 
-````
+```
 
 ---
 
@@ -50,6 +53,7 @@ cd movie-recommender
 ```bash
 conda create -n movie python=3.10
 conda activate movie
+pip install "numpy<2"  # required by scikit-surprise
 pip install -r requirements.txt
 ```
 
@@ -61,7 +65,7 @@ conda activate movie
 
 3. **Download MovieLens dataset**
 
-Place the [MovieLens 100K dataset](https://grouplens.org/datasets/movielens/) inside a folder called `ml-latest-small/` in the root of the project.
+Download the [MovieLens Latest Small dataset](https://grouplens.org/datasets/movielens/) and place its CSV files in a folder named `ml-latest-small/` in the root.
 
 ---
 
@@ -72,6 +76,18 @@ streamlit run main.py
 ```
 
 Then open `http://localhost:8501` in your browser.
+
+---
+
+## Running Tests
+
+Unit tests are provided for content-based and group recommendation logic.
+
+```bash
+pytest
+````
+
+Tests are also automatically run via [GitHub Actions](https://github.com/wojtekjurkowicz/movie-recommender/actions).
 
 ---
 
